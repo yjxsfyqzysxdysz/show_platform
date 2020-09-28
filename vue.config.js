@@ -27,6 +27,7 @@ module.exports = {
       .set('@', resolve('src'))
       .set('@assets', resolve('src/assets/'))
       .set('@com', resolve('src/components/'))
+      .set('@comm', resolve('src/common/'))
       .set('@img', resolve('src/assets/img/'))
       .set('@tools', resolve('src/tools/'))
       .set('@lib', resolve('src/lib/'))
