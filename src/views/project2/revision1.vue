@@ -1,5 +1,5 @@
 <template>
-  <div class="project2" :style="{'background-color': colorInfo.HEX}">
+  <div class="revision1" :style="{'background-color': colorInfo.HEX}">
     <div class="left">
       <ul>
         <li v-for="(e,i) of colordata" :key="i" class="item" :class="[`item${padStartNum(i+1)}`]" @click="activeItem(e, i)">
@@ -14,7 +14,7 @@
         <ul>
           <li v-for="(e,i) of 'CMYK'" :key="i">
             <p class="altText">{{e}}</p>
-            <span class="cont" :style="{color: filterCanvasColor(i)}">{{colorInfo.cmyk[i]}}</span>
+            <span class="cont" :style="{color: filterTextColor(i)}">{{colorInfo.cmyk[i]}}</span>
             <i class="circleBg"></i>
             <i class="circleBg circle-l"><s :style="cmykAngle(i, 1)"></s></i>
             <i class="circleBg circle-r"><s :style="cmykAngle(i, 0)"></s></i>
@@ -41,7 +41,7 @@ import colordata from './colorData.json'
 import { padStartNum } from '@/common/basedLodash'
 
 export default {
-  name: 'project2',
+  name: 'revision1',
   created() {
     this.colordata = colordata
     this.activeItem = this.$lodash.debounce(this._activeItem, 1e3)
@@ -71,7 +71,7 @@ export default {
     padStartNum(index) {
       return padStartNum(index)
     },
-    filterCanvasColor(index) {
+    filterTextColor(index) {
       let color = ''
       switch (index) {
         case 0:
@@ -128,8 +128,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "./common.less";
-.project2 {
+.revision1 {
   transition: background-color 1s linear;
   display: flex;
   justify-content: center;
