@@ -7,9 +7,9 @@ import lodash from 'lodash'
 import moment from 'moment'
 // import echarts from 'echarts'
 import 'moment/locale/zh-cn'
-import './common/iview'
-import './common/element'
-import Notice from './common/notice'
+import './lib/iview'
+import './lib/element'
+import Notice from './lib/notice'
 
 Vue.config.productionTip = false
 Vue.prototype.$lodash = Vue.lodash = lodash
