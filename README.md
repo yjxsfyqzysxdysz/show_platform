@@ -1,4 +1,4 @@
-# show_platform
+# vue3
 
 ## Project setup
 ```
