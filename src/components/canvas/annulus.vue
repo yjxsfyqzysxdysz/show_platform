@@ -52,6 +52,10 @@ export default {
     Eangle: { // 角度 结束
       type: [Number, String],
       default: 360
+    },
+    animation: { // 动画
+      type: [String, Number],
+      default: 0
     }
   },
   data() {
@@ -66,16 +70,31 @@ export default {
     this.ctx = c.getContext('2d') // 生成画笔
     this.ctx.strokeStyle = this.strokeStyle // 设置画笔颜色
     this.ctx.lineWidth = this.lineWidth // 设置线宽
-    this.drawCanvas()
+    this.drawCanvas(this.Sangle, this.Eangle)
+    this.nextDrawCanvas = this.nextDrawCanvasFun()
+  },
+  computed: {
+    animationTime: function() { // 动画时长 0-关闭
+      let num = 0
+      const val = this.animation
+      const reg = /^\d+m?s+$/i
+      if (typeof (val) === 'string' && reg.test(val)) { // ms | s
+        num = +val.replace(/ms/i, '').replace(/s/i, '000') // ms
+      } else if (Number.isInteger(val)) { // ms
+        num = val
+      }
+      return num
+    }
   },
   methods: {
     angle2radian(val) { // 角度-弧度
       val = Number(val)
       return (val / 180 * Math.PI)
     },
-    drawCanvas() { // 使用canvas的画笔
+    drawCanvas(Sangle, Eangle) { // 使用canvas的画笔
+      this.ctx.clearRect(0, 0, this.Cwidth, this.Cheight) // 清除画布
       this.ctx.beginPath() // 起始一条路径，或重置当前路径
-      this.ctx.arc(this.centerCircle.cx, this.centerCircle.cy, this.radius, this.angle2radian(this.Sangle - 90), this.angle2radian(this.Eangle - 90), this.direction)
+      this.ctx.arc(this.centerCircle.cx, this.centerCircle.cy, this.radius, this.angle2radian(Sangle - 90), this.angle2radian(Eangle - 90), this.direction)
       this.ctx.stroke();
     },
     drawText(x, y, text) { // 绘制文字
@@ -103,12 +122,42 @@ export default {
       if (!this.drawing) {
         return
       }
+    },
+    nextDrawCanvasFun() {
+      let timer = null
+      const that = this
+      let Eangle = this.Eangle
+      const step = 1
+      function clearTimer() {
+        clearInterval(timer)
+        timer = null
+      }
+      return function() {
+        if (that.animationTime) {
+          if (timer) {
+            clearTimer()
+          }
+          const status = that.Eangle > Eangle ? 1 : -1
+          timer = setInterval(() => {
+            Eangle += status * step
+            that.drawCanvas(that.Sangle, Eangle)
+            if (Eangle === that.Eangle) {
+              clearTimer()
+            }
+          }, that.animationTime);
+        } else {
+          that.drawCanvas(that.Sangle, that.Eangle)
+        }
+      }
     }
   },
   watch: {
     Eangle(val) {
-      this.drawCanvas()
+      this.nextDrawCanvas()
     }
+  },
+  destroyed() {
+    this.nextDrawCanvas = null
   },
 }
 </script>
