@@ -191,8 +191,6 @@ export default {
           display: block;
           width: 50px;
           height: 50px;
-        }
-        .circleBg {
           background-image: url(../../assets/projectImg/project2/circle.png);
           background-repeat: no-repeat;
         }
