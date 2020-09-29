@@ -45,19 +45,8 @@ export default {
   methods: {
     // 点击标签
     onSelect(name) {
-      switch (name) {
-        case 1:
-          this.componentInfo = revision1
-          break;
-        case 2:
-          this.componentInfo = revision2
-          break;
-        case 3:
-          this.componentInfo = revision3
-          break;
-        case 4:
-          this.componentInfo = revision4
-          break;
+      if (name) {
+        this.componentInfo = `revision${name}`
       }
     }
   }
