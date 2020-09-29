@@ -47,11 +47,11 @@ export default {
     this.activeItem = this.$lodash.debounce(this._activeItem, 1e3)
   },
   mounted() {
-    colordata.forEach((e, i) => {
+    this.colordata.forEach((e, i) => {
       document.styleSheets[0].addRule(`.project2 .left ul .item.item${this.padStartNum(i + 1)}:hover .itemcontent2`, `background-color: ${e.HEX};`)
     })
-    let n = this.$lodash.random(0, colordata.length - 1, false)
-    this._activeItem(colordata[n], n)
+    let n = this.$lodash.random(0, this.colordata.length - 1, false)
+    this._activeItem(this.colordata[n], n)
   },
   data() {
     return {
@@ -94,7 +94,7 @@ export default {
     },
     activeStyle(i) {
       if (i === this.activeIndex) {
-        return colordata[i].HEX
+        return this.colordata[i].HEX
       }
       return ''
     },
@@ -128,18 +128,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "./common.less";
 .revision1 {
-  transition: background-color 1s linear;
-  display: flex;
-  justify-content: center;
-  padding: 40px;
   .left {
-    width: 400px;
+    width: 750px;
     margin-right: 150px;
     color: #fff;
     ul {
       display: flex;
-      width: 400px;
       flex-wrap: wrap;
       justify-content: space-between;
       .item {
