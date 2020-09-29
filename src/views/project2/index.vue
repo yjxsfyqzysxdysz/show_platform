@@ -1,293 +1,88 @@
 <template>
-  <div class="project2" :style="{'background-color': colorInfo.HEX}">
-    <div class="left">
-      <ul>
-        <li v-for="(e,i) of colordata" :key="i" class="item" :class="[`item${padStartNum(i+1)}`]" @click="activeItem(e, i)">
-          <p class="itemhead"></p>
-          <p class="itemcontent itemcontent1"></p>
-          <p class="itemcontent itemcontent2" :style="{'background-color': activeStyle(i)}"></p>
-        </li>
-      </ul>
+  <div class="project2">
+    <div class="header">
+      <Menu mode="horizontal" theme="dark" :active-name="1" @on-select="onSelect">
+        <MenuItem v-for="(item, index) of menuItemList" :name="index + 1" :key="index">
+        <i class="iconfont" :class="[item.icon]"></i> {{item.text}}
+        </MenuItem>
+        <MenuItem :name="0" to="/navigation">
+        <i class="iconfont icon-recovery"></i>
+        返回
+        </MenuItem>
+      </Menu>
     </div>
-    <div class="right">
-      <div class="list">
-        <ul>
-          <li v-for="(e,i) of 'CMYK'" :key="i">
-            <p class="altText">{{e}}</p>
-            <span class="cont" :style="{color: filterCanvasColor(i)}">{{colorInfo.cmyk[i]}}</span>
-            <i class="circleBg"></i>
-            <i class="circleBg circle-l"><s :style="cmykAngle(i, 1)"></s></i>
-            <i class="circleBg circle-r"><s :style="cmykAngle(i, 0)"></s></i>
-          </li>
-        </ul>
-        <ul>
-          <li v-for="(e,i) of 'RGB'" :key="i">
-            <p class="altText">{{e}}</p>
-            <span class="cont">{{colorInfo.rgb[i]}}</span>
-          </li>
-          <div class="cont HEXinfo">{{colorInfo.HEX}}</div>
-        </ul>
-      </div>
-      <div class="text">
-        <p class="mainText">{{colorInfo.mainText}}</p>
-        <p class="subText">{{colorInfo.subText}}</p>
-      </div>
-    </div>
+    <components :is="componentInfo" class="revision"></components>
   </div>
 </template>
 
 <script>
-import colordata from './colorData.json'
-import { padStartNum } from '@/common/basedLodash'
-
+import revision1 from './revision1' // 图片版
+import revision2 from './revision2' // Canvas版
+import revision3 from './revision3' // Svg版
+import revision4 from './revision4' // Echarts版
 export default {
   name: 'project2',
   created() {
-    this.colordata = colordata
-    this.activeItem = this.$lodash.debounce(this._activeItem, 1e3)
+    this.onSelect(1)
   },
-  mounted() {
-    colordata.forEach((e, i) => {
-      document.styleSheets[0].addRule(`.project2 .left ul .item.item${this.padStartNum(i + 1)}:hover .itemcontent2`, `background-color: ${e.HEX};`)
-    })
-    let n = this.$lodash.random(0, colordata.length - 1, false)
-    this._activeItem(colordata[n], n)
+  components: {
+    revision1,
+    revision2,
+    revision3,
+    revision4
   },
   data() {
     return {
-      colordata: [],
-      colorInfo: {
-        cmyk: [],
-        rgb: [],
-        HEX: '',
-        mainText: '',
-        subText: ''
-      },
-      activeIndex: null,
-      tmp: [0, 0, 0, 0]
+      componentInfo: '',
+      menuItemList: [
+        { text: '图片版', icon: 'icon-tuceng' },
+        { text: 'Canvas版', icon: 'icon-icon' },
+        { text: 'Svg版', icon: 'icon-collection' },
+        { text: 'Echarts版', icon: 'icon-focusing' }
+      ]
     }
   },
   methods: {
-    padStartNum(index) {
-      return padStartNum(index)
-    },
-    filterCanvasColor(index) {
-      let color = ''
-      switch (index) {
-        case 0:
-          color = '#0093d3'
-          break;
+    // 点击标签
+    onSelect(name) {
+      switch (name) {
         case 1:
-          color = '#cc006b'
+          this.componentInfo = revision1
           break;
         case 2:
-          color = '#fff10c'
+          this.componentInfo = revision2
           break;
         case 3:
-          color = '#000000'
+          this.componentInfo = revision3
           break;
-        default:
-          color = '#ffffff'
+        case 4:
+          this.componentInfo = revision4
           break;
       }
-      return color
-    },
-    activeStyle(i) {
-      if (i === this.activeIndex) {
-        return colordata[i].HEX
-      }
-      return ''
-    },
-    _activeItem(e, i) { // 选中项
-      this.colorInfo.cmyk = e.CMYK
-      this.colorInfo.rgb = e.RGB
-      this.colorInfo.HEX = e.HEX
-      this.colorInfo.mainText = e.name
-      this.colorInfo.subText = e.english
-      this.activeIndex = i
-    },
-    cmykAngle(index, direction) { // cmyk角度
-      if (!this.colorInfo.cmyk.length) return
-      let res = ''
-      if (direction) { // 左
-        res = `transform: rotate(${Math.max(this.colorInfo.cmyk[index] - 50, 0) * 3.6 - 180}deg);`
-        if ((this.colorInfo.cmyk[index] + this.tmp[index]) > 50 && this.colorInfo.cmyk[index] > this.tmp[index]) {
-          res += 'transition-delay: 0.5s;'
-        }
-      } else { // 右
-        res = `transform: rotate(${Math.min(this.colorInfo.cmyk[index], 50) * 3.6 + 180}deg);`
-        if ((this.colorInfo.cmyk[index] + this.tmp[index]) > 50 && this.colorInfo.cmyk[index] < this.tmp[index]) {
-          res += 'transition-delay: 0.5s;'
-        }
-        this.tmp[index] = this.colorInfo.cmyk[index]
-      }
-      return res
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-@import "./common.less";
 .project2 {
-  transition: background-color 1s linear;
-  display: flex;
-  justify-content: center;
-  padding: 40px;
-  .left {
-    width: 400px;
-    margin-right: 150px;
-    color: #fff;
-    ul {
-      display: flex;
-      width: 400px;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      .item {
-        width: 50px;
-        height: 287px;
-        position: relative;
-        overflow: hidden;
-        flex: none;
-        margin: 0 5px 5px;
-        cursor: pointer;
-        .itemhead {
-          height: 40px;
-          background-repeat: no-repeat;
-          background-image: url(../../assets/projectImg/project2/col_num.png);
-        }
-        .itemcontent {
-          height: 278px;
-          width: 100%;
-          position: absolute;
-          top: 0px;
-        }
-        .itemcontent1 {
-          background-image: url(../../assets/projectImg/project2/col_bg.png);
-          background-repeat: no-repeat;
-        }
-        .itemcontent2 {
-          background-color: #fff;
-          transition: background-color 0.15s linear;
-          mask-image: url(../../assets/projectImg/project2/col.png);
-          mask-repeat: no-repeat;
-        }
-      }
-    }
+  height: 100%;
+  .header {
+    width: 100%;
+    position: fixed;
+    background-color: transparent;
+    z-index: 1;
   }
-  .right {
-    width: 550px;
-    position: relative;
-    user-select: none;
-    .list {
-      width: 50px;
-      height: 100%;
-      position: fixed;
-      li {
-        border-bottom: 1px solid #ffffff6e;
-        position: relative;
-        overflow: hidden;
-        &:first-child {
-          border-top: 1px solid #ffffff6e;
-        }
-        .circleBg {
-          position: absolute;
-          bottom: 10px;
-          display: block;
-          width: 50px;
-          height: 50px;
-        }
-        .circleBg {
-          background-image: url(../../assets/projectImg/project2/circle.png);
-          background-repeat: no-repeat;
-        }
-        .circle-l,
-        .circle-r {
-          mask-repeat: no-repeat;
-          mask-image: url(../../assets/projectImg/project2/circle_h.png);
-          s {
-            display: block;
-            width: 50px;
-            height: 50px;
-            background-image: url(../../assets/projectImg/project2/colorBox.png);
-            background-repeat: no-repeat;
-            transition: transform 0.5s linear;
-            transform: rotate(180deg);
-          }
-        }
-        .circle-r {
-          transform: rotate(180deg);
-        }
-        &:nth-child(2) s {
-          background-position: 0 -50px;
-        }
-        &:nth-child(3) s {
-          background-position: 0 -100px;
-        }
-        &:nth-child(4) s {
-          background-position: 0 -150px;
-        }
-      }
-      .altText {
-        margin: 10px 0 6px 0;
-        color: #fff;
-      }
-      .cont {
-        width: 50px;
-        height: 50px;
-        display: block;
-        margin-bottom: 10px;
-        text-align: center;
-        line-height: 50px;
-        font-weight: 300;
-        font-size: 24px;
-      }
-      .HEXinfo {
-        color: #fff;
-        background-color: #efe8e882;
-        margin: 0;
-        width: 143px;
-        position: absolute;
-        border-radius: 8px;
-        border-width: 2px;
-        border-style: double;
-        top: 480px;
-        left: 90px;
-        box-sizing: content-box;
-        opacity: 0;
-        transition: all 0.15s linear;
-      }
-      ul + ul {
-        li:first-child {
-          border-top: none;
-        }
-        li .cont {
-          height: 30px;
-          line-height: 30px;
-          text-align: end;
-          color: #fff;
-        }
-        &:hover .HEXinfo {
-          opacity: 1;
-        }
-      }
-    }
-    .text {
-      text-align: center;
-      position: fixed;
-      color: #fff;
-      margin-left: 133px;
-      width: 170px;
-      .mainText {
-        width: 64px;
-        font-size: 64px;
-        margin: 0 auto;
-      }
-      .subText {
-        padding-top: 24px;
-        font-size: 18px;
-      }
-    }
+  .revision {
+    min-height: 100%;
+    transition: background-color 1s linear;
+    display: flex;
+    justify-content: center;
+    padding: 71px 40px;
   }
+}
+.ivu-menu {
+  background-color: #0000005e;
+  padding: 0 20px;
 }
 </style>
