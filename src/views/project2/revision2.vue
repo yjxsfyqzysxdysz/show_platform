@@ -2,12 +2,17 @@
   <div class="revision2" :style="{'background-color': colorInfo.HEX}">
     <div class="left">
       <ul>
-        <li v-for="(e,i) of colordata" :key="i" class="item" :style="{'border-top-color': e.HEX}" @click="activeItem(e, i)">
-          <div class="item1"></div>
+        <li v-for="(e,i) of colordata" :key="i" class="item" :style="{'border-top-color': e.HEX, 'color': activeStyle(i)}" @click="activeItem(e, i)">
+          <div class="item1">
+            <annulus v-for="f of 8" :key="f" :class="[`circleBg${Math.ceil(f / 2)}`]" class="circleBg" :Cwidth="24" :Cheight="24" :lineWidth="7" :strokeStyle="strokeStyle(i, f, e.HEX)" :centerCircle="{cx:12,cy:12}" radius="9" :Eangle="f % 2 ? 360 : e.CMYK[f / 2 - 1] * 3.6"></annulus>
+          </div>
           <div class="item2">
             <span :style="{color: e.HEX}">{{e.id}}</span>
             <span class="text">{{e.name}}</span></div>
-          <div class="item3"></div>
+          <div class="item3">
+            <span class="text">{{e.HEX}}</span>
+            <barBhart class="barBhart" :Cwidth="13" :Cheight="130" lineWidth="1" isBackground direction="bottom" :dataBase="e.RGB" :dataMax="255" :strokeColor="i === activeIndex ? e.HEX : '#fff'"></barBhart>
+          </div>
           <div class="item4">
             <span class="text">{{e.english}}</span>
           </div>
@@ -21,7 +26,7 @@
             <p class="altText">{{e}}</p>
             <span class="cont" :style="{color: filterTextColor(i)}">{{colorInfo.cmyk[i]}}</span>
             <annulus class="circleBg" :Cwidth="50" :Cheight="50" :lineWidth="3" strokeStyle="#ffffff6e" :centerCircle="{cx:25,cy:25}" radius="23"></annulus>
-            <annulus class="circleBg" :Cwidth="50" :Cheight="50" :lineWidth="3" :strokeStyle="filterTextColor(i)" :centerCircle="{cx:25,cy:25}" radius="23" :Eangle="Eangle" :animation="50"></annulus>
+            <annulus class="circleBg" :Cwidth="50" :Cheight="50" :lineWidth="3" :strokeStyle="filterTextColor(i)" :centerCircle="{cx:25,cy:25}" radius="23" :Eangle="colorInfo.cmyk[i] * 3.6" :animation="40"></annulus>
           </li>
         </ul>
         <ul>
@@ -53,12 +58,11 @@ export default {
   },
   created() {
     this.colordata = colordata
+    this.activeItem = this.$lodash.debounce(this._activeItem, 1e3)
   },
   mounted() {
-    this.Eangle = 180
-    setTimeout(() => {
-      this.Eangle = 10
-    }, 1e3)
+    let n = this.$lodash.random(0, this.colordata.length - 1, false)
+    this._activeItem(this.colordata[n], n)
   },
   data() {
     return {
@@ -70,7 +74,7 @@ export default {
         mainText: '煤竹',
         subText: 'SUSUTAKE'
       },
-      Eangle: 90
+      activeIndex: null
     }
   },
   methods: {
@@ -95,8 +99,28 @@ export default {
       }
       return color
     },
-    activeItem(e, i) { // 选中项
-
+    _activeItem(e, i) { // 选中项
+      this.colorInfo.cmyk = e.CMYK
+      this.colorInfo.rgb = e.RGB
+      this.colorInfo.HEX = e.HEX
+      this.colorInfo.mainText = e.name
+      this.colorInfo.subText = e.english
+      this.activeIndex = i
+    },
+    activeStyle(i) {
+      if (i === this.activeIndex) {
+        return this.colordata[i].HEX
+      }
+      return ''
+    },
+    strokeStyle(i, j, HEX) {
+      let color = '#FFF'
+      if (j % 2) {
+        color = '#FFFFFF6E'
+      } else if (i === this.activeIndex) {
+        color = HEX
+      }
+      return color
     }
   },
 }
@@ -115,22 +139,18 @@ export default {
       .item {
         width: 50px;
         height: 287px;
-        position: relative;
-        overflow: hidden;
         flex: none;
         margin: 0 5px 5px;
         cursor: pointer;
         border-top-style: solid;
         border-top-width: 6px;
-        display: flex;
-        justify-content: space-around;
-        flex-wrap: wrap;
+        position: relative;
+        transition: color 1s linear;
         & > div {
-          flex: none;
           width: 24px;
-          height: 112px;
-          position: relative;
-          padding-top: 7px;
+          height: 120px;
+          position: absolute;
+          margin-top: 7px;
           span {
             transform: rotate(90deg);
             display: inline-block;
@@ -142,8 +162,24 @@ export default {
           }
         }
         .item1 {
+          top: 0;
+          left: 0;
+          .circleBg1 {
+            top: 0;
+          }
+          .circleBg2 {
+            top: 32px;
+          }
+          .circleBg3 {
+            top: 64px;
+          }
+          .circleBg4 {
+            top: 96px;
+          }
         }
         .item2 {
+          top: 0;
+          right: 0;
           span + span {
             width: 100%;
             height: auto;
@@ -153,8 +189,22 @@ export default {
           }
         }
         .item3 {
+          bottom: 0;
+          left: 0;
+          height: 145px;
+          .text {
+            font-size: 10px;
+            height: 10px;
+            width: 10px;
+            line-height: 10px;
+            left: 0;
+            top: 0;
+          }
         }
         .item4 {
+          bottom: 0;
+          right: 0;
+          height: 145px;
         }
       }
     }
@@ -169,10 +219,7 @@ export default {
       position: fixed;
       li {
         border-bottom: 1px solid #ffffff6e;
-        position: relative;
-        overflow: hidden;
         .circleBg {
-          position: absolute;
           bottom: 10px;
         }
       }
@@ -236,6 +283,19 @@ export default {
         font-size: 18px;
       }
     }
+  }
+  ul {
+    li {
+      position: relative;
+      overflow: hidden;
+      .circleBg {
+        position: absolute;
+      }
+    }
+  }
+  .barBhart {
+    position: absolute;
+    right: 0;
   }
 }
 </style>

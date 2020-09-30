@@ -1,7 +1,6 @@
 <template>
   <div class="barBhart" :style="{width:`${Cwidth}px`,height:`${Cheight}px`}">
     <canvas ref="barBhart" :width="Cwidth" :height="Cheight"></canvas>
-
   </div>
 </template>
 
@@ -19,11 +18,11 @@ export default {
     },
     strokeColor: { // 画笔颜色
       type: String,
-      default: '#F00'
+      default: '#FFF'
     },
     backgroundColor: { // 背景颜色
       type: String,
-      default: '#ffffff6e'
+      default: '#FFFFFF6E'
     },
     lineWidth: { // 设置线宽
       type: [String, Number],
@@ -39,11 +38,11 @@ export default {
     },
     dataBase: { // data
       type: Array,
-      default: () => [220, 159, 180]
+      default: () => []
     },
-    scaleMax: {
+    dataMax: { // 基础数据最大值
       type: Number,
-      default: 255
+      default: 100
     }
   },
   data() {
@@ -61,71 +60,73 @@ export default {
     drawCanvas() { // 使用canvas的画笔
       const len = this.dataBase.length
       if (!len) return
-      this.ctx.beginPath() // 起始一条路径，或重置当前路径
-      let position = { x: 0, y: 0 } // 初始位置
-      let status = {
-        x: {
-          main: true,
-          direction: 1
-        },
-        y: {
-          main: false,
-          direction: 1
-        }
-      } // 轴状况
-      const x = Math.floor(this.Cwidth / len)
-      const y = Math.floor(this.Cheight / len)
+      const step = {
+        x: Math.floor(this.Cwidth / (len)),
+        y: Math.floor(this.Cheight / (len))
+      }
+      const length = {
+        x: this.Cwidth,
+        y: this.Cheight
+      }
+      let axis = { main: '', sub: '' } // 轴
+      let symbol = { x: 1, y: 1 } // 正负
       switch (this.direction) {
-        case 'bottom':
-          position.x = 0
-          position.y = this.Cheight
-          status.x.main = true
-          status.x.direction = 1
-          status.y.main = false
-          status.x.direction = -1
-          break
         case 'top':
-          position.x = 0
-          position.y = 0
-          status.x.main = true
-          status.x.direction = 1
-          status.y.main = false
-          status.x.direction = 1
+          axis.main = 'x'
+          axis.sub = 'y'
+          symbol[axis.main] = 1
+          symbol[axis.sub] = -1
           break
-        case 'left':
-          position.x = 0
-          position.y = 0
-          status.x.main = false
-          status.x.direction = 1
-          status.y.main = true
-          status.x.direction = 1
+        case 'bottom':
+          axis.main = 'x'
+          axis.sub = 'y'
+          symbol[axis.main] = 1
+          symbol[axis.sub] = 1
           break
         case 'right':
-          position.x = this.Cwidth
-          position.y = this.Cheight
-          status.x.main = true
-          status.x.direction = -1
-          status.y.main = false
-          status.x.direction = 1
+          axis.main = 'y'
+          axis.sub = 'x'
+          symbol[axis.main] = 1
+          symbol[axis.sub] = 1
+          break
+        case 'left':
+          axis.main = 'y'
+          axis.sub = 'x'
+          symbol[axis.main] = 1
+          symbol[axis.sub] = -1
           break
       }
+      let position = { x: 0, y: 0 }
       this.dataBase.forEach(e => {
+        // 初始化
+        position[axis.main] += step[axis.main]
+        position[axis.sub] = symbol[axis.sub] > 0 ? 0 : length[axis.sub]
+        // 开始绘制
+        this.ctx.strokeStyle = this.strokeColor
+        this.ctx.beginPath() // 起始一条路径，或重置当前路径
+        this.ctx.moveTo(position.x, position.y)
+        // 子轴改变
+        position[axis.sub] += symbol[axis.sub] * length[axis.sub] * this.setRatio(e)
+        this.ctx.lineTo(position.x, position.y)
+        this.ctx.stroke()
         if (this.isBackground) {
-          this.ctx.strokeStyle = this.backgroundColor // 设置画笔颜色
-          this.ctx.moveTo(cx, cy)
-          this.ctx.lineTo(subD.x ? this.Cwidth : cx, subD.y ? cy - this.Cheight * subDy : cy)
+          this.ctx.strokeStyle = this.backgroundColor
+          this.ctx.beginPath() // 起始一条路径，或重置当前路径
+          this.ctx.moveTo(position.x, position.y)
+          position[axis.sub] = symbol[axis.sub] > 0 ? length[axis.sub] : 0
+          this.ctx.lineTo(position.x, position.y)
+          this.ctx.stroke()
         }
-        this.ctx.strokeStyle = this.strokeColor // 设置画笔颜色
-        this.ctx.moveTo(cx, cy)
-        this.ctx.lineTo(subD.x ? e.x : cx, subD.y ? cy - e.y * subDy : cy)
-        cx += mainD.x * x
-        cy += mainD.y * y
       })
-      this.ctx.stroke();
+    },
+    setRatio(val) {
+      val = Number.isInteger(val) ? +val : 0
+      return val / this.dataMax
     }
   },
   watch: {
-    Eangle(val) {
+    strokeColor(val) {
+      this.ctx.clearRect(0, 0, this.Cwidth, this.Cheight) // 清除画布
       this.drawCanvas()
     }
   }

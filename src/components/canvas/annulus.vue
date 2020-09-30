@@ -127,7 +127,7 @@ export default {
       let timer = null
       const that = this
       let Eangle = this.Eangle
-      const step = 1
+      const step = 2
       function clearTimer() {
         clearInterval(timer)
         timer = null
@@ -141,7 +141,8 @@ export default {
           timer = setInterval(() => {
             Eangle += status * step
             that.drawCanvas(that.Sangle, Eangle)
-            if (Eangle === that.Eangle) {
+            if (Math.abs(Eangle - that.Eangle) < step) {
+              that.drawCanvas(that.Sangle, Eangle = that.Eangle)
               clearTimer()
             }
           }, that.animationTime);
@@ -154,6 +155,10 @@ export default {
   watch: {
     Eangle(val) {
       this.nextDrawCanvas()
+    },
+    strokeStyle(val) {
+      this.ctx.strokeStyle = this.strokeStyle // 设置画笔颜色
+      this.drawCanvas(this.Sangle, this.Eangle)
     }
   },
   destroyed() {
