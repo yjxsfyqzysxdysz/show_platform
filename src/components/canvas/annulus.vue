@@ -1,7 +1,6 @@
 <template>
   <div class="annulus" :style="{width:`${Cwidth}px`,height:`${Cheight}px`}">
     <canvas ref="annulus" :width="Cwidth" :height="Cheight" @mousedown="mousedown($event)" @mouseup="mouseup" @mousemove="mousemove($event)"></canvas>
-
   </div>
 </template>
 

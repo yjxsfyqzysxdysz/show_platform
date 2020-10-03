@@ -70,9 +70,9 @@ export default {
       colorInfo: {
         cmyk: [62, 63, 73, 21],
         rgb: [110, 85, 47],
-        HEX: '#6E552F',
-        mainText: '煤竹',
-        subText: 'SUSUTAKE'
+        HEX: '',
+        mainText: '',
+        subText: ''
       },
       activeIndex: null
     }
@@ -122,7 +122,7 @@ export default {
       }
       return color
     }
-  },
+  }
 }
 </script>
 
