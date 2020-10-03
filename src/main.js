@@ -5,7 +5,7 @@ import store from './store'
 import './api'
 import lodash from 'lodash'
 import moment from 'moment'
-// import echarts from 'echarts'
+import echarts from 'echarts'
 import 'moment/locale/zh-cn'
 import './lib/iview'
 import './lib/element'
@@ -14,7 +14,7 @@ import Notice from './lib/notice'
 Vue.config.productionTip = false
 Vue.prototype.$lodash = Vue.lodash = lodash
 Vue.prototype.$moment = Vue.moment = moment
-// Vue.prototype.$echarts = echarts
+Vue.prototype.$echarts = echarts
 Vue.prototype.$Notice = Vue.$Notice = Notice
 Vue.prototype.errorMsg = msg => Notice.error({ title: '错误', desc: msg })
 Vue.prototype.warningMsg = msg => Notice.warning({ title: '警告', desc: msg })
