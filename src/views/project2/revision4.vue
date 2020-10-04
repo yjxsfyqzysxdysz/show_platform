@@ -4,12 +4,15 @@
       <ul>
         <li v-for="(e,i) of colordata" :key="i" class="item" :style="{'border-top-color': e.HEX, 'color': activeStyle(i)}" @click="activeItem(e, i)">
           <div class="item1">
+            <annulusGroup class="circle" :Cwidth="24" :Cheight="120" :radius=[5,12] :padding="6" :Sangle="90" :value="e.CMYK" :annulusColor="strokeStyle(i, e.HEX)"></annulusGroup>
           </div>
           <div class="item2">
             <span :style="{color: e.HEX}">{{e.id}}</span>
-            <span class="text">{{e.name}}</span></div>
+            <span class="text">{{e.name}}</span>
+          </div>
           <div class="item3">
             <span class="text">{{e.HEX}}</span>
+            <barBhart class="barBhart" :Cwidth="12" :Cheight="130" :lineWidth="1" isBackground :barBhartColor="i === activeIndex ? e.HEX : '#fff'" :value="e.RGB"></barBhart>
           </div>
           <div class="item4">
             <span class="text">{{e.english}}</span>
@@ -44,17 +47,23 @@
 <script>
 import colordata from './colorData.json'
 import annulus from '@com/echarts/annulus'
+import annulusGroup from '@com/echarts/annulusGroup'
+import barBhart from '@com/echarts/barBhart'
 
 export default {
   name: 'revision4',
   components: {
-    annulus
+    annulus,
+    annulusGroup,
+    barBhart
   },
   created() {
     this.colordata = colordata
     this.activeItem = this.$lodash.debounce(this._activeItem, 1e3)
   },
   mounted() {
+    let n = this.$lodash.random(0, this.colordata.length - 1, false)
+    this._activeItem(this.colordata[n], n)
   },
   data() {
     return {
@@ -105,11 +114,9 @@ export default {
       }
       return ''
     },
-    strokeStyle(i, j, HEX) {
+    strokeStyle(i, HEX) {
       let color = '#FFF'
-      if (j % 2) {
-        color = '#FFFFFF6E'
-      } else if (i === this.activeIndex) {
+      if (i === this.activeIndex) {
         color = HEX
       }
       return color
@@ -156,18 +163,6 @@ export default {
         .item1 {
           top: 0;
           left: 0;
-          // .circleBg1 {
-          //   top: 0;
-          // }
-          // .circleBg2 {
-          //   top: 32px;
-          // }
-          // .circleBg3 {
-          //   top: 64px;
-          // }
-          // .circleBg4 {
-          //   top: 96px;
-          // }
         }
         .item2 {
           top: 0;
@@ -184,6 +179,9 @@ export default {
           bottom: 0;
           left: 0;
           height: 145px;
+          .barBhart {
+            margin-left: 12px;
+          }
           .text {
             font-size: 10px;
             height: 10px;
@@ -280,14 +278,7 @@ export default {
     li {
       position: relative;
       overflow: hidden;
-      .circle {
-        // position: absolute;
-      }
     }
   }
-}
-.chart {
-  width: 50px;
-  height: 50px;
 }
 </style>

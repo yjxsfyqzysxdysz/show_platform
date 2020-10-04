@@ -76,7 +76,6 @@ export default {
             radius: this.radius,
             hoverAnimation: false,
             stillShowZeroSum: false,
-
             label: {
               show: false
             },
