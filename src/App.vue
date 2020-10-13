@@ -1,6 +1,15 @@
 <template>
   <div id="app">
-    <router-view />
+    <!-- <router-view /> -->
+    <!-- 
+      keep-alive
+      第一次会触发 create 和 mount，之后只会触发 update 钩子
+      因为 未被销毁，所以不会触发 destroy
+     -->
+    <keep-alive>
+      <router-view v-if="$route.meta.keepAlive"></router-view>
+    </keep-alive>
+    <router-view v-if="!$route.meta.keepAlive"></router-view>
   </div>
 </template>
 
