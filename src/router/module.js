@@ -18,6 +18,9 @@ export default [
   // 项目2-日本传统色
   {
     path: '/japanColor',
-    component: resolve => require(['../views/project2/index.vue'], resolve)
+    component: resolve => require(['../views/project2/index.vue'], resolve),
+    meta: {
+      // keepAlive: true
+    }
   }
 ]
