@@ -21,3 +21,9 @@ export const CMYK2GRB = function(val) {
   const B = 255 * (1 - Y) * (1 - K)
   return [R, G, B]
 }
+
+// 数据类型判断
+export const toRawType = function(value) {
+  const _toString = Object.prototype.toString
+  return _toString.call(value).slice(8, -1)
+}
