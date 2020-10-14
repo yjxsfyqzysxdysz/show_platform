@@ -23,7 +23,6 @@ export const CMYK2GRB = function(val) {
 }
 
 // 数据类型判断
-export const toRawType = function(value) {
-  const _toString = Object.prototype.toString
-  return _toString.call(value).slice(8, -1)
+export const toRawType = function(val) {
+  return Object.prototype.toString.call(val).slice(8, -1)
 }
