@@ -1,10 +1,13 @@
 'use strict'
 const path = require('path')
+const fs = require('fs')
 const resolve = dir => path.join(__dirname, dir)
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin // 体积分析
 const Compressionplugin = require('compression-webpack-plugin') // gzip
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin') // 压缩css
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin') // 优化lodash
+const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin') // html中添加引入
+const DllReferencePlugin = require('webpack/lib/DllReferencePlugin') // dll
 
 module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
@@ -14,7 +17,7 @@ module.exports = {
   filenameHashing: true, // 默认情况下，生成的静态资源在它们的文件名中包含了 hash 以便更好的控制缓存，你可以通过将这个选项设为 false 来关闭文件名哈希。(false的时候就是让原来的文件名不改变)
   runtimeCompiler: true, // 是否使用包含运行时编译器的 Vue 构建版本 设置为 true 后你就可以在 Vue 组件中使用 template 选项
   transpileDependencies: [], // 默认情况下 babel-loader 会忽略所有 node_modules 中的文件。如果你想要通过 Babel 显式转译一个依赖，可以在这个选项中列出来
-  productionSourceMap: true, // 是否在构建生产包时生成 sourceMap 文件，false将提高构建速度
+  productionSourceMap: process.env.NODE_ENV === 'development', // 是否在构建生产包时生成 sourceMap 文件，false将提高构建速度
   // 分化配置
   configureWebpack: config => {
     const plugins = [
@@ -37,7 +40,7 @@ module.exports = {
         //  有关更多信息，请参见“定义”一节。
         defaultSizes: 'parsed',
         //  在默认浏览器中自动打开报告
-        openAnalyzer: true,
+        openAnalyzer: false,
         //  如果为true，则Webpack Stats JSON文件将在bundle输出目录中生成
         generateStatsFile: false,
         //  如果`generateStatsFile`为`true`，将会生成Webpack Stats JSON文件的名字。
@@ -58,7 +61,7 @@ module.exports = {
         test: /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i,
         threshold: 10240,
         minRatio: 0.8,
-        deleteOriginalAssets: false
+        deleteOriginalAssets: false // 是否删除源文件
       }),
       // 压缩提取出的css，并解决ExtractTextPlugin分离出的js重复问题(多个文件引入同一css文件)
       new OptimizeCSSPlugin()
@@ -68,9 +71,9 @@ module.exports = {
       // 为生产环境修改配置...
       // 压缩代码并去掉console
       config.optimization.minimizer[0].options.terserOptions.compress.warnings = false
-      config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
+      // config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
       config.optimization.minimizer[0].options.terserOptions.compress.drop_debugger = true
-      config.optimization.minimizer[0].options.terserOptions.compress.pure_funcs = ['console.log']
+      // config.optimization.minimizer[0].options.terserOptions.compress.pure_funcs = ['console.log']
     } else {
       // 为开发环境修改配置...
     }
@@ -79,12 +82,27 @@ module.exports = {
   chainWebpack: config => {
     config.resolve.alias
       .set('@', resolve('src'))
-      .set('@assets', resolve('src/assets/'))
-      .set('@com', resolve('src/components/'))
-      .set('@comm', resolve('src/common/'))
-      .set('@img', resolve('src/assets/img/'))
-      .set('@tools', resolve('src/tools/'))
-      .set('@lib', resolve('src/lib/'))
+      .set('@assets', resolve('src/assets'))
+      .set('@com', resolve('src/components'))
+      .set('@comm', resolve('src/common'))
+      .set('@img', resolve('src/assets/img'))
+      .set('@tools', resolve('src/tools'))
+      .set('@lib', resolve('src/lib'))
+
+    const files = fs.readdirSync(resolve('public/dll'))
+    files.forEach((file, index) => {
+      if (/.*\.dll.js/.test(file)) {
+        config.plugin('AddAssetHtmlWebpackPlugin' + index).use(AddAssetHtmlWebpackPlugin, [{ filepath: resolve(`public/dll/${file}`) }])
+      }
+      if (/.*\.manifest.json/.test(file)) {
+        config.plugin('DllReferencePlugin' + index).use(DllReferencePlugin, [
+          {
+            context: __dirname,
+            manifest: resolve(`public/dll/${file}`)
+          }
+        ])
+      }
+    })
 
     // htmlWebpackPlugin.options.title
   },
