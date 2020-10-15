@@ -89,16 +89,16 @@ module.exports = {
       .set('@tools', resolve('src/tools'))
       .set('@lib', resolve('src/lib'))
 
-    const files = fs.readdirSync(resolve('public/dll'))
+    const files = fs.readdirSync(resolve('dll'))
     files.forEach((file, index) => {
       if (/.*\.dll.js/.test(file)) {
-        config.plugin('AddAssetHtmlWebpackPlugin' + index).use(AddAssetHtmlWebpackPlugin, [{ filepath: resolve(`public/dll/${file}`) }])
+        config.plugin('AddAssetHtmlWebpackPlugin' + index).use(AddAssetHtmlWebpackPlugin, [{ filepath: resolve(`dll/${file}`) }])
       }
       if (/.*\.manifest.json/.test(file)) {
         config.plugin('DllReferencePlugin' + index).use(DllReferencePlugin, [
           {
             context: __dirname,
-            manifest: resolve(`public/dll/${file}`)
+            manifest: resolve(`dll/${file}`)
           }
         ])
       }
