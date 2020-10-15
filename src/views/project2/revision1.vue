@@ -47,9 +47,10 @@ export default {
     this.activeItem = this.$lodash.debounce(this._activeItem, 1e3)
   },
   mounted() {
-    this.colordata.forEach((e, i) => {
-      document.styleSheets[0].addRule(`.project2 .left ul .item.item${this.padStartNum(i + 1)}:hover .itemcontent2`, `background-color: ${e.HEX};`)
-    })
+    // 添加 鼠标移入效果
+    // this.colordata.forEach((e, i) => {
+    //   document.styleSheets[0].addRule(`.project2 .left ul .item.item${this.padStartNum(i + 1)}:hover .itemcontent2`, `background-color: ${e.HEX};`)
+    // })
     let n = this.$lodash.random(0, this.colordata.length - 1, false)
     this._activeItem(this.colordata[n], n)
   },
