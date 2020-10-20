@@ -9,6 +9,12 @@ export default [
     icon: 'icon-zhuye',
     name: '日本の伝統色',
     path: '/japanColor',
+    type: 1
+  },
+  {
+    icon: 'icon-large-window',
+    name: '插槽',
+    path: '/slot',
     type: 2
   }
 ]

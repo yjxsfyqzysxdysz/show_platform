@@ -22,5 +22,10 @@ export default [
     meta: {
       // keepAlive: true
     }
+  },
+  // 项目3-slot 插槽demo
+  {
+    path: '/slot',
+    component: resolve => require(['../views/project3/child.vue'], resolve)
   }
 ]

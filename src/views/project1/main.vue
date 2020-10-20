@@ -9,7 +9,6 @@ export default {
   name: 'project1Main',
   data() {
     return {
-
     }
   },
 }
