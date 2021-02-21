@@ -1,5 +1,5 @@
 import { readObject, saveObject, clearMulti } from './storage.js'
-import { STORE_KEY_USERNAME, STORE_KEY_SESSION, STORE_KEY_TOKEN } from '@lib/config.js'
+import { STORE_KEY_USERNAME, STORE_KEY_SESSION, STORE_KEY_TOKEN } from '@lib/userInfo'
 
 export function read() {
   return readObject([STORE_KEY_USERNAME, STORE_KEY_SESSION, STORE_KEY_TOKEN])

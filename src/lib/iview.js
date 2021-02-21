@@ -101,7 +101,7 @@ Vue.prototype.$Message = Message
 Vue.prototype.$Modal = Modal
 Vue.prototype.$Notice = Notice
 Vue.prototype.$Spin = Spin
-Vue.prototype.$notice = Vue.$Notice = notice
-Vue.prototype.errorMsg = msg => notice.error({ title: '错误', desc: msg })
-Vue.prototype.warningMsg = msg => notice.warning({ title: '警告', desc: msg })
-Vue.prototype.successMsg = msg => notice.success({ title: '成功', desc: msg, duration: 2 })
+// Vue.prototype.$notice = Vue.$Notice = notice
+// Vue.prototype.errorMsg = msg => notice.error({ title: '错误', desc: msg })
+// Vue.prototype.warningMsg = msg => notice.warning({ title: '警告', desc: msg })
+// Vue.prototype.successMsg = msg => notice.success({ title: '成功', desc: msg, duration: 2 })

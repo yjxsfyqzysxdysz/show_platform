@@ -5,4 +5,3 @@ export const STORE_KEY_TOKEN = 'user.token'
 export const STORE_KEY_ACCESS_TOKEN = 'user.access_token'
 export const STORE_KEY_REFRESH_TOKEN = 'user.refresh_token'
 export const STORE_KEY_ORGID = 'orgId'
-

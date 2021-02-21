@@ -16,5 +16,11 @@ export default [
     name: '插槽',
     path: '/slot',
     type: 2
+  },
+  {
+    icon: '',
+    name: '烟花',
+    path: '/fireworks',
+    type: 2
   }
 ]

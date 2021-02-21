@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import navlist from '@/navlist.js'
+import navlist from '@lib/navlist.js'
 
 export default {
   created() {
