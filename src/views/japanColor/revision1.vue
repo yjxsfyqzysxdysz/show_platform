@@ -2,10 +2,10 @@
   <div class="revision1" :style="{'background-color': colorInfo.HEX}">
     <div class="left">
       <ul>
-        <li v-for="(e,i) of colordata" :key="i" class="item" :class="[`item${padStartNum(i+1)}`]" @click="activeItem(e, i)">
-          <p class="itemhead"></p>
-          <p class="itemcontent itemcontent1"></p>
-          <p class="itemcontent itemcontent2" :style="{'background-color': activeStyle(i)}"></p>
+        <li v-for="(e,i) of colordata" :key="i" class="item" :class="[`item-${padStartNum(i+1)}`]" @click="activeItem(e, i)">
+          <p class="item-head"></p>
+          <p class="item-content item-content1"></p>
+          <p class="item-content item-content2" :style="{'background-color': activeStyle(i)}"></p>
         </li>
       </ul>
     </div>
@@ -147,22 +147,22 @@ export default {
         flex: none;
         margin: 0 5px 5px;
         cursor: pointer;
-        .itemhead {
+        &-head {
           height: 40px;
           background-repeat: no-repeat;
           background-image: url(../../assets/projectImg/project2/col_num.png);
         }
-        .itemcontent {
+        &-content {
           height: 278px;
           width: 100%;
           position: absolute;
           top: 0px;
         }
-        .itemcontent1 {
+        &-content1 {
           background-image: url(../../assets/projectImg/project2/col_bg.png);
           background-repeat: no-repeat;
         }
-        .itemcontent2 {
+        &-content2 {
           background-color: #fff;
           transition: background-color 0.15s linear;
           mask-image: url(../../assets/projectImg/project2/col.png);
