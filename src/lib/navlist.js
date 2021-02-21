@@ -18,7 +18,7 @@ export default [
     type: 2
   },
   {
-    icon: '',
+    icon: 'icon-refresh',
     name: '烟花',
     path: '/fireworks',
     type: 2

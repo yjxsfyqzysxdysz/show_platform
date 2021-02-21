@@ -34,7 +34,7 @@ module.exports = {
         analyzerPort: 8888,
         //  路径捆绑，将在`static`模式下生成的报告文件。
         //  相对于捆绑输出目录。
-        reportFilename: 'report.html',
+        reportFilename: 'index.html',
         //  模块大小默认显示在报告中。
         //  应该是`stat`，`parsed`或者`gzip`中的一个。
         //  有关更多信息，请参见“定义”一节。
